@@ -1,27 +1,51 @@
 import './index.scss';
 import './App.scss';
 import { useDispatch, useSelector } from 'react-redux';
+import { addCustomerAction, removeCustomerAction } from './store/customerReducer';
 
 
 function App() {
   const dispatch = useDispatch();
-  const cash = useSelector(state => state.cash);
-  console.log(cash);
+  const cash = useSelector(state => state.cash.cash);
+  const customers = useSelector(state => state.customer.customers)
 
-  const addCash = () => {
-    dispatch({type: 'cash/add', payload: 5})
+  const addCash = (cash) => {
+    dispatch({type: 'cash/add', payload: cash})
   }
-  const getCash = () => {
-    dispatch({type: 'cash/get', payload: 5})
+  const getCash = (cash) => {
+    dispatch({type: 'cash/get', payload: cash})
+  }
+  const addCustomer = (name) => {
+    const customer = {
+      name,
+      id: Date.now()
+    }
+    dispatch(addCustomerAction(customer));
+  }
+  const removeCustomer = (customer) => {
+    dispatch(removeCustomerAction(customer.id));
   }
 
   return (
     <div className="App">
       <div>{cash}</div>
       <div style={{display:"flex"}}>
-        <button onClick={() => addCash()}>Add</button>
-        <button onClick={() => getCash()}>Remove</button>
+        <button onClick={() => addCash(Number(prompt()))}>Add cash</button>
+        <button onClick={() => getCash(Number(prompt()))}>Remove cash</button>
+        <button onClick={() => addCustomer(prompt())}>Add client</button>
+        <button onClick={() => getCash(Number(prompt()))}>Remove client</button>
       </div>
+      { customers.length > 0 ?
+        <div>
+          {customers.map(customer => 
+            <div onClick={() => removeCustomer(customer)} key={customer.id}>{customer.name}</div>
+            )}
+        </div>
+        : 
+        <div>
+          Клиентов нет
+        </div>
+      }
     </div>
   );
 }
